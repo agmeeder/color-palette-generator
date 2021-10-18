@@ -11,7 +11,8 @@ export interface Range {
 export interface Color {
   h: number
   s: number
-  b: number
+  l: number
+  a: number
 }
 
 export interface Palette {

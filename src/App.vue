@@ -4,29 +4,31 @@
     <li v-for="palette in colors.palettes">
       {{ palette.name }}
       <div class="flex flex-row space-x-2">
-        <div
-          v-for="color in palette.colors"
-          class="w-12 h-12 pt-2 rounded-full border-2 text-center"
-          :style="hsl(color)"
-        >
-          {{ color.h }}
-        </div>
+        <app-color v-for="color in palette.colors" :key="color.h" :color="color" @select-color="selectColor(color)" />
       </div>
     </li>
   </ul>
+  <app-color :color="selectedColor" />
+  <div>{{ toRgb }}</div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import store from './store/store'
 import { Color } from './types'
+import convert from 'color-convert'
+import AppColor from './components/AppColor.vue'
 
 const { colors, loadColors } = store
+const selectedColor = ref<Color>({} as Color)
 
-const hsl = (color: Color) => {
-  return {
-    backgroundColor: `hsl(${color.h}, ${color.s} , ${color.b});`
-  }
+const toRgb = computed(() => {
+  const { h, s, l } = selectedColor.value
+  return convert.hsl.rgb([h, s, l])
+})
+
+const selectColor = (color: Color) => {
+  selectedColor.value = color
 }
 
 onMounted(async () => {
