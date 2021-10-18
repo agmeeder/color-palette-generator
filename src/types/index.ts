@@ -21,7 +21,7 @@ export interface Palette {
   colors: Color[]
 }
 
-export default interface Colors {
+export interface Colors {
   combinations: Combination[]
   palettes: Palette[]
 }

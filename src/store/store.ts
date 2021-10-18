@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue'
-import Colors from '../types'
+import { Colors } from '../types'
 
 const state = reactive({
   colors: {} as Colors
