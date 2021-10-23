@@ -1,25 +1,35 @@
 <template>
-  <h1>Colors</h1>
-  <ul>
-    <li v-for="palette in colors.palettes">
-      {{ palette.name }}
-      <div class="flex flex-row space-x-2">
-        <app-color v-for="color in palette.colors" :key="color.h" :color="color" @select-color="selectColor(color)" />
-      </div>
-    </li>
-  </ul>
-  <app-color :color="selectedColor" />
-  <div>{{ toRgb }}</div>
+  <div class="p-4 text-gray-700">
+    <h1 class="text-2xl">Colors</h1>
+    <div>
+      <Dropdown
+        v-model="selectedPalette"
+        :options="palettes"
+        optionLabel="Palette"
+        placeholder="Selecteer een kleurenplatte"
+      />
+    </div>
+    <div>
+      <app-palette
+        v-for="(palette, index) in colors.palettes"
+        :key="index"
+        :palette="palette"
+        @select-color="selectColor"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import store from './store/store'
-import { Color } from './types'
+import { Palette, Color } from './types'
 import convert from 'color-convert'
-import AppColor from './components/AppColor.vue'
+import Dropdown from 'primevue/dropdown'
+import AppPalette from './components/app-palette.vue'
 
 const { colors, loadColors } = store
+const selectedPalette = ref<Palette>({} as Palette)
 const selectedColor = ref<Color>({} as Color)
 
 const toRgb = computed(() => {
@@ -27,7 +37,12 @@ const toRgb = computed(() => {
   return convert.hsl.rgb([h, s, l])
 })
 
-const selectColor = (color: Color) => {
+const palettes = computed(() => {
+  return store.colors.value.palettes
+})
+
+const selectColor = (palette: Palette, color: Color) => {
+  selectedPalette.value = palette
   selectedColor.value = color
 }
 
